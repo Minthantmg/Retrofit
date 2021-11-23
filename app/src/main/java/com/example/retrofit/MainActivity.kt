@@ -18,13 +18,25 @@ class MainActivity : AppCompatActivity() {
         val repository = Repository()
         val viewModelFactory = MainViewModelFactory(repository)
         viewModel = ViewModelProvider(this,viewModelFactory).get(MainViewModel::class.java)
-        viewModel.getPost()
-        viewModel.myResponse.observe(this, Observer { response ->
-           if (response.isSuccessful){
-               textView.text = response.body()?.title!!
-           }else{
-               textView.text = response.code().toString()
-           }
-        })
+
+
+        button.setOnClickListener {
+            val myNum = number_editText.text.toString()
+            viewModel.getCustomPost(Integer.parseInt(myNum),"id","desc")
+            viewModel.myCustomPost.observe(this, Observer { response ->
+                if (response.isSuccessful){
+                    textView.text = response.body()?.toString()
+                    response.body()?.forEach {
+                        Log.d("Responese",it.userId.toString())
+                        Log.d("Responese",it.id.toString())
+                        Log.d("Responese",it.title)
+                        Log.d("Responese",it.body)
+                        Log.d("Responese","-------------")
+                    }
+                }else{
+                    textView.text = response.code().toString()
+                }
+            })
+        }
     }
 }
